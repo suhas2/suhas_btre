@@ -37,24 +37,25 @@
       <div class="row">
         <div class="col-md-12">
           <h2>Welcome {{ user.first_name }}</h2>
-          {% if contacts %}
-            <p>Here are the job listings that you have inquired about</p>
+          {% if job_apps %}
+            <p>Here are the job applications that you have applied</p>
             <table class="table">
               <thead>
                 <tr>
                   <th scope="col">#</th>
-                  <th scope="col">Property</th>
+                  <th scope="col">Job Title</th>
+                  <th scope="col">Company</th>
+                  <th scope="col">Application Date</th>
                   <th></th>
                 </tr>
               </thead>
               <tbody>
-                {% for contact in contacts %}
+                {% for job_app in job_apps %}
                   <tr>
-                    <td>{{ contact.id }}</td>
-                    <td>{{ contact.listing }}</td>
-                    <td>
-                      <a class="btn btn-light" href="{% url 'listing' contact.listing_id %}">View Listing</a>
-                    </td>
+                    <td>{{ forloop.counter }}</td>
+                    <td>{{ job_app.jobTitle }}</td>
+                    <td>{{ job_app.company }}</td>
+                    <td>{{ job_app.applyDate }}</td>
                   </tr>
                 {% endfor %}
               </tbody>
