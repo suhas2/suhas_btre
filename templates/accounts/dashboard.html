@@ -8,7 +8,7 @@
       <div class="row text-center">
         <div class="col-md-12">
           <h1 class="display-4">User Dashboard</h1>
-          <p class="lead">Manage your BT Real Estate account</p>
+          <p class="lead">Manage your Job Application State</p>
         </div>
       </div>
     </div>
@@ -38,7 +38,7 @@
         <div class="col-md-12">
           <h2>Welcome {{ user.first_name }}</h2>
           {% if contacts %}
-            <p>Here are the property listings that you have inquired about</p>
+            <p>Here are the job listings that you have inquired about</p>
             <table class="table">
               <thead>
                 <tr>
@@ -60,7 +60,105 @@
               </tbody>
             </table>
           {% else %}
-            <p>You have not made any inquiries</p>
+            {% load static %}
+          <form >
+		<head>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+		<link rel="stylesheet" href="style/style.css" type="text/css" media="screen" />
+		    <meta http-equiv="Content-type" content="text/html; charset=utf-8">
+		    <meta name="viewport" content="width=device-width,initial-scale=1">
+		    <link rel="stylesheet" type="text/css" href="css/table_style/jquery.dataTables.min.css">
+		    <link rel="stylesheet" type="text/css" href="css/table_style/buttons.dataTables.min.css">
+		        <link rel="stylesheet" href="css/Calendar_jquery-ui.css">
+		    <style type="text/css" class="init"></style>
+
+		    <script type="text/javascript" language="javascript" src="scripts/table_scripts/jquery-1.12.3.js">
+		    </script>
+		    <script type="text/javascript" language="javascript" src="scripts/table_scripts/jquery.dataTables.min.js">
+		    </script>
+		    <script type="text/javascript" language="javascript" src="scripts/table_scripts/dataTables.buttons.min.js">
+		    </script>
+		    <script type="text/javascript" language="javascript" src="scripts/table_scripts/buttons.flash.min.js">
+		    </script>
+		    <script type="text/javascript" language="javascript" src="scripts/table_scripts/jszip.min.js">
+		    </script>
+		    <script type="text/javascript" language="javascript" src="scripts/table_scripts/pdfmake.min.js">
+		    </script>
+		    <script type="text/javascript" language="javascript" src="scripts/table_scripts/vfs_fonts.js">
+		    </script>
+		    <script type="text/javascript" language="javascript" src="scripts/table_scripts/buttons.html5.min.js">
+		    </script>
+		    <script type="text/javascript" language="javascript" src="scripts/table_scripts/buttons.print.min.js">
+		    </script>
+		        <script src="scripts/calendar_scripts/jquery-ui.js"></script>
+		    <script type="text/javascript" class="init">
+		    $(document).ready(function() {
+		    $('#example').DataTable( {
+		        dom: 'Bfrtip',
+		        buttons: [
+		            'copy', 'csv', 'excel', 'pdf', 'print'
+		    ]
+		    } );
+		} );
+		</script>
+		<script>
+		  $( function() {
+		    $( "#datepicker" ).datepicker({ dateFormat: 'yy-mm-dd' });
+		    $( "#datepicker1" ).datepicker({ dateFormat: 'yy-mm-dd' });
+		  } );
+		</script>
+
+
+		</head>
+
+		<body class="wide comments example">
+		<div align="center" id="mainWrapper">
+
+		  <div id="pageContent"><br />
+		<div align="left" style="margin-left:24px;">
+
+
+		<form action="/nodes" method="POST">
+		From:<input size="16" type="text"  name="start" id="datepicker" />To:<input type="text" id="datepicker1" name="end" />
+
+		<script type="text/javascript">
+		  document.getElementById('datepicker').value = "";
+		  document.getElementById('datepicker1').value = "";
+		</script>
+
+		<input type="submit" name="button" id="button" value="Query" />
+		</form>
+
+		<br /> <hr />
+
+		<div class="fw-body">
+		<table id="example" class="display nowrap" cellspacing="0" width="100%">
+
+
+          <thead>
+              <tr>
+                 <th>#</th>
+                  <th>Company</th>
+                  <th>Position</th>
+                  <th>Status</th>
+        <!--      <th>Upcoming Activity</th>
+                  <th>Upcoming Date</th>
+                  <th>Reason</th>   -->
+                  <th>Application Date</th>
+     <!--         <th>Success Odds</th>
+                  <th>Top Skills You Don't Have</th>    -->
+              </tr>
+          </thead>
+          <tbody>
+
+          </tbody>
+      </table>
+
+		</div> </div>
+
+
+		</body>
+</form>
           {% endif %}
         </div>
       </div>
