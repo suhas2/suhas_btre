@@ -47,6 +47,7 @@
                   <th scope="col">Company</th>
                   <th scope="col">Application Date</th>
                   <th scope="col">Status</th>
+                  <th scope="col">Source</th>
                   <th></th>
                 </tr>
               </thead>
@@ -58,6 +59,7 @@
                     <td>{{ job_app.jobTitle }}</td>
                     <td>{{ job_app.company }}</td>
                     <td>{{ job_app.applyDate }}</td>
+                    <td>{{ job_app.source }}</td>
                     <td>
                       <select name="ddStatus">
                         <option value="-1">---------</option>

@@ -14,5 +14,6 @@ class JobApplication(models.Model):
   company = models.CharField(max_length=200)
   applyDate = models.CharField(max_length=200)
   msgId = models.CharField(max_length=200)
+  source = models.CharField(max_length=200, default='')
   def __str__(self):
     return self.jobTitle + '@' + self.company

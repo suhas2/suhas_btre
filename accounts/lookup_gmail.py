@@ -57,13 +57,14 @@ def GetMessage(service, user_id, msg_id, user):
             subject = str(header['value'])
             jobTitle = subject[subject.index('for ') + 4 : subject.index(' at ')]
             company = subject[subject.index('at ') + 3:]
+            source = 'LinkedIn'
         elif header['name'] == 'Date':
             date = header['value']
             date = convertTime(str(date))
     if user.is_authenticated:
       inserted_before = JobApplication.objects.all().filter(msgId=msg_id)
       if not inserted_before:
-        japp = JobApplication(jobTitle=jobTitle, company=company, applyDate=date, msgId=msg_id, user = user)
+        japp = JobApplication(jobTitle=jobTitle, company=company, applyDate=date, msgId=msg_id, source = source, user = user)
         japp.save()
 
 
