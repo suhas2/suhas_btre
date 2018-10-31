@@ -59,7 +59,6 @@
                     <td>{{ job_app.jobTitle }}</td>
                     <td>{{ job_app.company }}</td>
                     <td>{{ job_app.applyDate }}</td>
-                    <td>{{ job_app.source }}</td>
                     <td>
                       <select name="ddStatus">
                         <option value="-1">---------</option>
@@ -71,6 +70,7 @@
                         {% endfor %}
                       </select>
                   </td>
+                    <td>{{ job_app.source }}</td>
                   <td>
                       {% csrf_token %}
                       <input type="hidden" name="pk" value="{{job_app.pk}}">
