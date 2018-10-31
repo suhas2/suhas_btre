@@ -2,6 +2,10 @@ from django.shortcuts import render, redirect
 from django.contrib import messages, auth
 from django.contrib.auth.models import User
 from contacts.models import Contact
+from .models import JobApplication
+from .models import ApplicationStatus
+from .lookup_gmail import fetchJobApplications
+from django.http import HttpResponseRedirect
 
 def register(request):
   if request.method == 'POST':
@@ -62,10 +66,25 @@ def logout(request):
     messages.success(request, 'You are now logged out')
     return redirect('index')
 
-def dashboard(request):
-  user_contacts = Contact.objects.order_by('-contact_date').filter(user_id=request.user.id)
+def updateJobApplication(request):
+  if request.method == 'POST':
+    user_job_app = JobApplication.objects.get(pk=request.POST['pk'])
+    status = request.POST['ddStatus']
+    if status == -1:
+        pass
+    else:
+        user_job_app.applicationStatus = ApplicationStatus.objects.get(pk=status)
+        user_job_app.save()
+        messages.success(request, '.')
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER'))
 
+def dashboard(request):
+  user_job_apps = JobApplication.objects.filter(user_id=request.user.id).order_by('-applyDate')
+  statuses = ApplicationStatus.objects.all()
+  fetchJobApplications(request.user)
+  print(user_job_apps)
   context = {
-    'contacts': user_contacts
+    'job_apps': user_job_apps,
+    'statuses': statuses
   }
   return render(request, 'accounts/dashboard.html', context)
