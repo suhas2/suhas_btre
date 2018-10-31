@@ -46,16 +46,35 @@
                   <th scope="col">Job Title</th>
                   <th scope="col">Company</th>
                   <th scope="col">Application Date</th>
+                  <th scope="col">Status</th>
                   <th></th>
                 </tr>
               </thead>
               <tbody>
                 {% for job_app in job_apps %}
                   <tr>
+                    <form action="{% url 'updateJobApplication' %}" method="POST">
                     <td>{{ forloop.counter }}</td>
                     <td>{{ job_app.jobTitle }}</td>
                     <td>{{ job_app.company }}</td>
                     <td>{{ job_app.applyDate }}</td>
+                    <td>
+                      <select name="ddStatus">
+                        <option value="-1">---------</option>
+                        {% for status in statuses %}
+                          <option value="{{status.pk}}"
+                            {% if status == job_app.applicationStatus %}selected="selected"{% endif %}>
+                              {{status.value|capfirst}}
+                          </option>
+                        {% endfor %}
+                      </select>
+                  </td>
+                  <td>
+                      {% csrf_token %}
+                      <input type="hidden" name="pk" value="{{job_app.pk}}">
+                      <input type="submit" value="Update" class="btn btn-secondary btn-block">
+                  </td>
+                </form>
                   </tr>
                 {% endfor %}
               </tbody>
