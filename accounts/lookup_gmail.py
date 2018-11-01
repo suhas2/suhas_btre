@@ -4,16 +4,18 @@ from httplib2 import Http
 from oauth2client import file, client, tools
 from googleapiclient import errors
 
+
 from datetime import datetime
 from dateutil import tz
 
 from requests import exceptions as requests_errors
 
 from google.auth.exceptions import RefreshError
-from google.oauth2.credentials import Credentials
+from .social_auth_credentials import Credentials
 from social_django.utils import load_strategy
 
 from .models import JobApplication
+import base64
 
 def convertTime(base):
 
@@ -47,10 +49,16 @@ def GetMessage(service, user_id, msg_id, user):
     A Message.
   """
   try:
-    message = service.users().messages().get(userId=user_id, id=msg_id).execute()
+    message = service.users().messages().get(userId=user_id, id=msg_id, format='full').execute()
     jobTitle = ''
     company = ''
     date = ''
+    '''for part in message['payload']['parts']:
+        if(part['mimeType'] == 'text/html'):
+            print()
+            print(base64.urlsafe_b64decode(part['body']['data'].encode('ASCII')))
+            print()
+            print()'''
     for header in message['payload']['headers']:
         if header['name'] == 'Subject':
             #print('Message subject: %s' % header['value'])
@@ -108,8 +116,7 @@ def ListMessagesMatchingQuery(service, user_id, query=''):
 def fetchJobApplications(user):
     #initiates Gmail API
     usa = user.social_auth.get(provider='google-oauth2')
-    creds= Credentials(usa.extra_data['access_token'])
-    GMAIL = build('gmail', 'v1', credentials=creds)
+    GMAIL = build('gmail', 'v1', credentials=Credentials(usa))
 
     messages = ListMessagesMatchingQuery(GMAIL, 'me', 'from:jobs-listings@linkedin.com AND subject:You applied for')# AND after:2018/01/01')
     #print('there is ' + str(len(messages)) + ' messages sent from jobs-listings@linkedin.com')
