@@ -81,8 +81,9 @@ def updateJobApplication(request):
 def dashboard(request):
   user_job_apps = JobApplication.objects.filter(user_id=request.user.id).order_by('-applyDate')
   statuses = ApplicationStatus.objects.all()
-  fetchJobApplications(request.user)
-  print(user_job_apps)
+  if request.user.social_auth.filter(provider='google-oauth2'):
+      fetchJobApplications(request.user)
+
   context = {
     'job_apps': user_job_apps,
     'statuses': statuses
