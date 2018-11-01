@@ -43,8 +43,8 @@
               <thead>
                 <tr>
                   <th scope="col">#</th>
-                  <th scope="col">Job Title</th>
                   <th scope="col">Company</th>
+                  <th scope="col">Job Title</th>
                   <th scope="col">Application Date</th>
                   <th scope="col">Status</th>
                   <th scope="col">Source</th>
@@ -56,8 +56,8 @@
                   <tr>
                     <form action="{% url 'updateJobApplication' %}" method="POST">
                     <td>{{ forloop.counter }}</td>
-                    <td>{{ job_app.jobTitle }}</td>
                     <td>{{ job_app.company }}</td>
+                    <td>{{ job_app.jobTitle }}</td>
                     <td>{{ job_app.applyDate }}</td>
                     <td>
                       <select name="ddStatus">
