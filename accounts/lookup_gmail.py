@@ -16,6 +16,7 @@ from social_django.utils import load_strategy
 
 from .models import JobApplication
 import base64
+import time
 
 def convertTime(base):
 
@@ -25,7 +26,8 @@ def convertTime(base):
 
     # utc = datetime.utcnow()
     #utc = datetime.strptime('2011-01-21 02:37:21', '%Y-%m-%d %H:%M:%S')
-    base = base[:base.index('+0000') - 1]
+    print(base)
+    base = base[:25]
     utc = datetime.strptime(base, '%a, %d %b %Y %H:%M:%S')
     #Mon, 1 Oct 2018 22:35:03 +0000 (UTC)
 
@@ -38,7 +40,13 @@ def convertTime(base):
     return central.strftime('%Y-%m-%d')
     #return central.strftime('%a, %d %b %Y %H:%M:%S %z')
 
-def GetMessage(service, user_id, msg_id, user):
+def find_nth(string, substring, n):
+   if (n == 1):
+       return string.find(substring)
+   else:
+       return string.find(substring, find_nth(string, substring, n - 1) + 1)
+
+def GetMessage(service, user_id, msg_id, user, source):
   """Get a Message with given ID.
   Args:
     service: Authorized Gmail API service instance.
@@ -63,16 +71,31 @@ def GetMessage(service, user_id, msg_id, user):
         if header['name'] == 'Subject':
             #print('Message subject: %s' % header['value'])
             subject = str(header['value'])
-            jobTitle = subject[subject.index('for ') + 4 : subject.index(' at ')]
-            company = subject[subject.index('at ') + 3:]
-            source = 'LinkedIn'
+            if(source == 'LinkedIn'):
+                jobTitle = subject[subject.index('for ') + 4 : subject.index(' at ')]
+                company = subject[subject.index('at ') + 3:]
+            elif(source == 'Hired.com'):
+                jobTitle = subject[subject.index('st: ') + 4 : subject.index(' at ')]
+                company = subject[subject.index('at ') + 3 : subject.index('(')]
         elif header['name'] == 'Date':
             date = header['value']
             date = convertTime(str(date))
+
+    for part in message['payload']['parts']:
+        if(part['mimeType'] == 'text/html'):
+            body = str(base64.urlsafe_b64decode(part['body']['data'].encode('ASCII')))
+            s = find_nth(body, 'https://media.licdn.com', 2)
+            if(s != -1):
+                e = find_nth(body, '" alt="' + company + '"', 1)
+                image_url = body[s : e].replace('&amp;', '&')
+                print(image_url)
+            else:
+                image_url = 'https://d31kswug2i6wp2.cloudfront.net/images/3_0/icon_company_no-logo_200x200.jpg'
+
     if user.is_authenticated:
       inserted_before = JobApplication.objects.all().filter(msgId=msg_id)
       if not inserted_before:
-        japp = JobApplication(jobTitle=jobTitle, company=company, applyDate=date, msgId=msg_id, source = source, user = user)
+        japp = JobApplication(jobTitle=jobTitle, company=company, applyDate=date, msgId=msg_id, source = source, user = user, companyLogo = image_url)
         japp.save()
 
 
@@ -118,12 +141,12 @@ def fetchJobApplications(user):
     usa = user.social_auth.get(provider='google-oauth2')
     GMAIL = build('gmail', 'v1', credentials=Credentials(usa))
 
-    messages = ListMessagesMatchingQuery(GMAIL, 'me', 'from:jobs-listings@linkedin.com AND subject:You applied for')# AND after:2018/01/01')
+    #print(str(time.gmtime()))
+    linkedInMessages = ListMessagesMatchingQuery(GMAIL, 'me', 'from:jobs-listings@linkedin.com AND subject:You applied for')# AND after:2018/01/01')
+    hiredMessages = ListMessagesMatchingQuery(GMAIL, 'me', 'reply@hired.com AND subject:Interview Request')
     #print('there is ' + str(len(messages)) + ' messages sent from jobs-listings@linkedin.com')
 
-    jobList = []
-    for message in messages:
-        ja = GetMessage(GMAIL, 'me', message['id'], user)
-        jobList.append(ja)
-
-    print(jobList)
+    for message in linkedInMessages:
+        GetMessage(GMAIL, 'me', message['id'], user, 'LinkedIn')
+    for message in hiredMessages:
+        GetMessage(GMAIL, 'me', message['id'], user, 'Hired.com')

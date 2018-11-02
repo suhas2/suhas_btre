@@ -43,6 +43,7 @@
               <thead>
                 <tr>
                   <th scope="col">#</th>
+                  <th scope="col">Logo</th>
                   <th scope="col">Company</th>
                   <th scope="col">Job Title</th>
                   <th scope="col">Application Date</th>
@@ -56,6 +57,7 @@
                   <tr>
                     <form action="{% url 'updateJobApplication' %}" method="POST">
                     <td>{{ forloop.counter }}</td>
+                    <td> <img src="{{ job_app.companyLogo }}"  style="width: 50px; height: 50px;"></td>
                     <td>{{ job_app.company }}</td>
                     <td>{{ job_app.jobTitle }}</td>
                     <td>{{ job_app.applyDate }}</td>
