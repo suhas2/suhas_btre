@@ -12,6 +12,7 @@ class JobApplication(models.Model):
   applicationStatus = models.ForeignKey(ApplicationStatus, on_delete=models.DO_NOTHING, null=True, blank=True)
   jobTitle = models.CharField(max_length=200)
   company = models.CharField(max_length=200)
+  companyLogo = models.CharField(max_length=200, null=True, blank=True)
   applyDate = models.CharField(max_length=200)
   msgId = models.CharField(max_length=200)
   source = models.CharField(max_length=200, default='')
